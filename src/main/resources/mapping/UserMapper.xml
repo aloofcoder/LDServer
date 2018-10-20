@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.le.baseframe.core.dao.UserDao">
+
+    <select id="searchUser" resultMap="userResultMap">
+      SELECT * FROM user_info
+      WHERE user_status = 0
+      <include refid="isCondition"/>
+      ORDER BY create_time DESC
+      limit #{startIndex}, #{pageSize};
+    </select>
+
+    <!-- 查询用户信息总条数 -->
+    <select id="getRowCount" resultType="int">
+        SELECT count(1) FROM user_info
+        WHERE user_status = 0
+        <include refid="isCondition"/>
+    </select>
+
+    <sql id="isCondition">
+        <if test="condition != null and condition != ''">
+            AND #{condition}
+        </if>
+    </sql>
+
+    <select id="searchUserById" resultMap="userResultMap" parameterType="long">
+      SELECT * FROM user_info WHERE id = #{userId}
+    </select>
+
+    <select id="searchUserByUserNum" resultMap="userResultMap" parameterType="long">
+        SELECT * FROM user_info WHERE user_num = #{userNumber}
+        AND user_status = 0
+    </select>
+    <!-- 添加用户信息 -->
+    <insert id="insertUser" parameterType="user">
+        INSERT INTO user_info
+        (id, user_num, user_name, user_gender, user_mobile, user_address,
+        user_idcard, user_idcardurl, user_imgurl, linkman_name1, linkman_mobile1,
+        linkman_name2, linkman_mobile2, linkman_name3, linkman_mobile3, user_status,
+        user_remark, create_time, edit_time, create_user, edit_user)
+        VALUES (NULL, #{userNumber}, #{userName}, #{userGender},
+        #{userMobile}, #{userAddress}, #{userIdCard}, #{userIdCardUrl},
+        #{userImgUrl}, #{linkmanName1},#{linkmanMobile1}, #{linkmanName2},
+        #{linkmanMobile2}, #{linkmanName3}, #{linkmanMobile3}, #{userStatus},
+        #{userRemark}, unix_timestamp(now()), UNIX_TIMESTAMP(NOW()),
+        #{createUser}, #{editUser});
+    </insert>
+
+    <!-- 修改用户 -->
+    <update id="updateUser" parameterType="user">
+      UPDATE user_info SET user_num = #{userNumber},user_name = #{userName},
+      user_gender = #{userGender}, user_mobile=#{userMobile},
+      user_address = #{userAddress}, user_idcard = #{userIdCard},
+      user_idcardurl = #{userIdCardUrl}, user_imgurl = #{userImgUrl},
+      linkman_name1 = #{linkmanName1}, linkman_mobile1 = #{linkmanMobile1},
+      linkman_name2 = #{linkmanName2}, linkman_mobile2 = #{linkmanMobile2},
+      linkman_name3 = #{linkmanName3}, linkman_mobile3 = #{linkmanMobile3},
+      user_status = #{userStatus}, user_remark = #{userRemark},
+      edit_time = UNIX_TIMESTAMP(NOW()), edit_user = #{editUser}
+      WHERE id = #{id}
+    </update>
+
+    <!-- 删除用户 -->
+    <update id="deleteUser" parameterType="long">
+        UPDATE user_info SET user_status = 1
+        WHERE id = #{id}
+    </update>
+
+    <!-- 用户信息与表对应关系 -->
+    <resultMap id="userResultMap" type="user">
+        <id property="id" column="id"></id>
+        <result property="userNumber" column="user_num"></result>
+        <result property="userName" column="user_name"></result>
+        <result property="userGender" column="user_gender"></result>
+        <result property="userMobile" column="user_mobile"></result>
+        <result property="userAddress" column="user_address"></result>
+        <result property="userIdCard" column="user_idcard"></result>
+        <result property="userIdCardUrl" column="user_idcardurl"></result>
+        <result property="userImgUrl" column="user_imgurl"></result>
+        <result property="linkmanName1" column="linkman_name1"></result>
+        <result property="linkmanMobile1" column="linkman_mobile1"></result>
+        <result property="linkmanName2" column="linkman_name2"></result>
+        <result property="linkmanMobile2" column="linkman_mobile2"></result>
+        <result property="linkmanName3" column="linkman_name3"></result>
+        <result property="linkmanMobile3" column="linkman_mobile3"></result>
+        <result property="userStatus" column="user_status"></result>
+        <result property="userRemark" column="user_remark"></result>
+        <result property="createUser" column="create_user"></result>
+        <result property="editUser" column="edit_user"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="editTime" column="edit_time"></result>
+    </resultMap>
+</mapper>

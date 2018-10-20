@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.le.baseframe.core.dao.LoanDao">
+    <!-- 分页查询贷款信息 -->
+    <select id="searchLoans" resultMap="loanResultMap">
+        SELECT * FROM loan_info
+        WHERE loan_status = 0
+        <include refid="isCondition"/>
+        ORDER BY create_time DESC
+        limit #{startIndex}, #{pageSize};
+    </select>
+
+    <!-- 通过用户编号获取用户贷款信息 -->
+    <select id="searchLoan" parameterType="long" resultMap="loanResultMap">
+        SELECT * FROM loan_info
+        WHERE loan_status = 0
+        AND user_id = #{userId}
+    </select>
+
+    <!-- 获取所有贷款信息总条数 -->
+    <select id="getRowCount" resultType="int">
+        SELECT count(*) FROM loan_info
+        WHERE loan_status = 0
+        <include refid="isCondition"/>
+    </select>
+
+    <!-- 查询条件 -->
+    <sql id="isCondition">
+        <if test="condition != null and condition != ''">
+            AND #{condition}
+        </if>
+    </sql>
+
+    <!-- 获取当前还款中的用户贷款信息 -->
+    <select id="searchLoanInfo" resultType="loan" resultMap="loanResultMap">
+        select * from loan_info where loan_status = 0
+    </select>
+
+    <!-- 添加贷款信息 -->
+    <insert id="insertLoan" parameterType="loan">
+      insert into loan_info (id, user_id, loan_money,loan_interest,
+        loan_periods,loan_interest_period,loan_type,loan_pledge,loan_status,loan_remarks,
+        create_time, edit_time, create_user, edit_user)
+      values (null, #{userId}, #{loanMoney}, #{loanInterest}, #{loanPeriods},
+        #{loanInterestPeriod}, #{loanType}, #{loanPledge}, #{loanStatus},
+        #{loanRemarks}, unix_timestamp(now()), UNIX_TIMESTAMP(NOW()),
+        #{createUser}, #{editUser});
+    </insert>
+
+    <!-- 修改用户贷款信息 -->
+    <update id="updateLoan" parameterType="loan">
+        UPDATE loan_info SET user_id = #{userId},
+        loan_money = #{loanMoney}, loan_interest = #{loanInterest},
+        loan_periods = #{loanPeriods}, loan_interest_period = #{loanInterestPeriod},
+        loan_type = #{loanType}, loan_pledge = #{loanPledge}, loan_status = #{loanStatus},
+        loan_remarks = #{loanRemarks}, edit_time = unix_timestamp(now()),
+        edit_user = #{editUser}
+        WHERE id = #{id};
+    </update>
+
+    <!-- 删除贷款信息 -->
+    <delete id="deleteLoan" parameterType="long">
+        UPDATE loan_info SET loan_status = 2
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 用户信息与表对应关系 -->
+    <resultMap id="loanResultMap" type="loan">
+        <id property="id" column="id"></id>
+        <result property="userId" column="user_id"></result>
+        <result property="loanMoney" column="loan_money"></result>
+        <result property="loanInterest" column="loan_interest"></result>
+        <result property="loanPeriods" column="loan_periods"></result>
+        <result property="loanInterestPeriod" column="loan_interest_period"></result>
+        <result property="loanType" column="loan_type"></result>
+        <result property="loanPledge" column="loan_pledge"></result>
+        <result property="loanStatus" column="loan_status"></result>
+        <result property="loanRemarks" column="loan_remarks"></result>
+        <result property="createUser" column="create_user"></result>
+        <result property="editUser" column="edit_user"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="editTime" column="edit_time"></result>
+    </resultMap>
+</mapper>

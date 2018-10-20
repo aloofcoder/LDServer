@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.le.baseframe.core.dao.ManagerDao">
+
+    <select id="searchManagers" resultMap="managerResultMap">
+        SELECT * FROM manager_info
+        WHERE manager_status = 0
+        <include refid="isCondition"/>
+        ORDER BY create_time DESC
+        limit #{startIndex}, #{pageSize};
+    </select>
+
+    <select id="getRowCount" resultType="int">
+        SELECT count(*) FROM manager_info
+        WHERE manager_status = 0
+        <include refid="isCondition"/>
+    </select>
+
+    <!-- 查询条件 -->
+    <sql id="isCondition">
+        <if test="condition != null and condition != ''">
+            AND #{condition}
+        </if>
+    </sql>
+
+    <select id="searchManagerByManagerNumber" parameterType="long" resultMap="managerResultMap">
+        SELECT * FROM manager_info
+        WHERE manager_num = #{managerNumber}
+        AND manager_status = 0;
+    </select>
+
+    <insert id="insertManager" parameterType="manager">
+        INSERT INTO manager_info (id, manager_num, manager_pwd, manager_name,
+        login_time, manager_status, manager_remark, create_time, edit_time,
+        create_user, edit_user) VALUES(null, #{managerNumber}, #{managerPwd},
+        #{managerName}, #{loginTime}, #{managerStatus}, #{managerRemark},
+        unix_timestamp(now()), unix_timestamp(now()), #{createUser}, #{editUser});
+    </insert>
+
+    <update id="updateManager" parameterType="manager">
+        UPDATE manager_info SET manager_num = #{managerNumber}, manager_pwd = #{managerPwd},
+        manager_name = #{managerName}, login_time = #{loginTime}, manager_status = #{managerStatus},
+        manager_remark = #{managerRemark}, edit_time = unix_timestamp(now()), edit_user = #{editUser}
+        WHERE id = #{id};
+    </update>
+
+    <delete id="deleteManager" parameterType="long">
+        UPDATE manager_info SET manager_status = 1
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 管理员信息与表对应关系 -->
+    <resultMap id="managerResultMap" type="manager">
+        <id property="id" column="id"></id>
+        <result property="managerNumber" column="manager_num"></result>
+        <result property="managerPwd" column="manager_pwd"></result>
+        <result property="managerName" column="manager_name"></result>
+        <result property="loginTime" column="login_time"></result>
+        <result property="managerStatus" column="manager_status"></result>
+        <result property="managerRemark" column="manager_remark"></result>
+        <result property="createUser" column="create_user"></result>
+        <result property="editUser" column="edit_user"></result>
+        <result property="createTime" column="create_time"></result>
+        <result property="editTime" column="edit_time"></result>
+    </resultMap>
+</mapper>
