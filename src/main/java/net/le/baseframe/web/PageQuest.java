@@ -19,7 +19,7 @@ public class PageQuest implements Serializable {
     private int pageSize = PAGESIZE;
     private String condition;
     public int getStartIndex (int pageNum,int pageSize) {
-        pageNum = pageNum > 0 ? pageNum : 1;
+        pageNum = pageNum > 0 ? pageNum : PAGENUM;
         pageSize = pageSize > 0 ? pageSize : PAGESIZE;
         return (pageNum - 1) * pageSize;
     }

@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -38,7 +39,7 @@ public class RepaymentServiceImpl implements RepaymentService {
     @Override
     public PageBean getRepayments(PageQuest pageQuest) {
         int pageNum = pageQuest.getPageNum();
-        int pageSize = pageQuest.getPageNum();
+        int pageSize = pageQuest.getPageSize();
         if (pageNum < 0) {
             throw new AppControllerException("pageNum必须大于0！");
         }
@@ -47,7 +48,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         }
         String condition = pageQuest.getCondition();
         int startIndex = pageQuest.getStartIndex(pageNum, pageSize);
-        List<Repayment> list = repaymentDao.searchRepayments(startIndex, pageSize, condition);
+        List<Map<String, Object>> list = repaymentDao.searchRepayments(startIndex, pageSize, condition);
         int count = repaymentDao.getRowCount(condition);
         int totalPage = PageBean.getTotalPage(pageSize, count);
         PageBean pageBean = new PageBean(pageNum, pageSize, totalPage, count, list);
@@ -55,10 +56,10 @@ public class RepaymentServiceImpl implements RepaymentService {
     }
 
     @Override
-    public Repayment getRepayment(Long userId) {
+    public List<Repayment> getRepayment(Long userId) {
         CheckParamUtils.isNull(userId, "用户信息Id不能为空！");
-        Repayment repayment = repaymentDao.searchRepayment(userId);
-        return repayment;
+        List<Repayment> list = repaymentDao.searchRepayment(userId);
+        return list;
     }
 
     @Override
@@ -124,6 +125,7 @@ public class RepaymentServiceImpl implements RepaymentService {
         }
         // 用户需要还款金额
         int repayMoney = 0;
+        int repayInterest = 0;
         // 用户的贷款总金额
         Integer loanMoney = loan.getLoanMoney();
         // 用户的利息总金额
@@ -149,14 +151,23 @@ public class RepaymentServiceImpl implements RepaymentService {
             // 获取从贷款到当前的度过月份
             int totalMonth = DateUtils.spendMonth(Long.parseLong(loanTime +"000"));
 //                由于还款开始时间为贷款时间的下一个月
-            if (totalMonth == 0) {
-                return;
+//            if (totalMonth == 0) {
+//                return;
+//            }
+            if (loanInterestPeriods != null && loanInterestPeriods > 0) {
+                repayInterest = loanInterestPeriods;
             }
-            if (totalMonth - 1 <= loanInterestPeriods) {
+            if (totalMonth <= repayInterest) {
                 // 本期该还金额为利息
-                repayMoney = loanInterest / loanInterestPeriods;
+                if (repayInterest > 0) {
+                    repayMoney = loanInterest / repayInterest;
+                } else {
+//                    throw new AppServiceException("该条贷款信息异常！");
+                    log.debug("该条贷款信息异常！");
+                    return;
+                }
             } else {
-                repayMoney = loanMoney / (loanPeriods - loanInterestPeriods);
+                repayMoney = loanMoney / (loanPeriods - repayInterest);
             }
         }
         Repayment repayment = new Repayment();

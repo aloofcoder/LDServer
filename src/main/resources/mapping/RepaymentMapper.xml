@@ -6,25 +6,40 @@
 
 
     <!-- 分页获取用户还款信息 -->
-    <select id="searchRepayments" resultMap="repaymentResultMap">
-        SELECT * FROM repayment_info
-        WHERE repayment_status &lt; 2
+    <select id="searchRepayments" resultType="map">
+        SELECT l.id loanId,l.loan_money loanMoney, l.loan_interest loanInterest,l.loan_periods loanPeriods,l.loan_interest_period loanInterestPeriod,
+        l.loan_type loanType,l.loan_pledge loanPledge,l.loan_status loanStatus, l.loan_remarks loanRemarks,
+        u.id userId,u.user_num userNumber,u.user_name userName,u.user_gender userGender,u.user_mobile userMobile,
+        u.user_address userAddress,u.user_idcard userIdCard,u.user_idcardurl userIdCardUrl,u.user_imgurl userImgUrl,
+        u.linkman_name1 linkmanName1,u.linkman_mobile1 linkmanMobile1,
+        u.linkman_name2 linkmanName2,u.linkman_mobile2 linkmanMobile2,
+        u.linkman_name3 linkmanName3,u.linkman_mobile3 linkmanMobile3,
+        r.id id,r.repayment_money repaymentMoney,r.repayment_source repaymentSource,
+        r.repayment_time repaymentTime, r.lower_time lowerTime,r.repayment_status repaymentStatus,r.repayment_remark repaymentRemark,
+        r.create_time createTime
+        FROM repayment_info r
+        LEFT JOIN loan_info l ON r.loan_id = l.id
+        LEFT JOIN user_info u ON r.user_id = u.id
+        WHERE r.repayment_status &lt; 2  AND l.loan_status &lt; 2 AND u.user_status = 0
         <include refid="isCondition"/>
-        ORDER BY create_time DESC
+        ORDER BY r.create_time DESC
         limit #{startIndex}, #{pageSize};
     </select>
 
     <!-- 获取还款信息总条数 -->
     <select id="getRowCount" parameterType="string" resultType="int">
-        SELECT count(*) FROM repayment_info
-        WHERE repayment_status &lt; 2
+        SELECT count(*)
+        FROM repayment_info r
+        LEFT JOIN loan_info l ON r.loan_id = l.id
+        LEFT JOIN user_info u ON r.user_id = u.id
+        WHERE r.repayment_status &lt; 2  AND l.loan_status &lt; 2 AND u.user_status = 0
         <include refid="isCondition"/>
     </select>
 
     <!-- 查询条件 -->
     <sql id="isCondition">
         <if test="condition != null and condition != ''">
-            AND #{condition}
+            AND ${condition}
         </if>
     </sql>
 
@@ -58,7 +73,8 @@
         loan_id = #{loanId}, repayment_money = #{repaymentMoney},
         repayment_source = #{repaymentSource}, repayment_time = #{repaymentTime},
         lower_time = #{lowerTime}, repayment_status = #{repaymentStatus},
-        repayment_remark = #{repaymentRemark}, edit_user = #{editUser}, edit_time = unix_timestamp(now());
+        repayment_remark = #{repaymentRemark}, edit_user = #{editUser}, edit_time = unix_timestamp(now())
+        where id = #{id};
     </update>
 
 

@@ -28,16 +28,17 @@ public class TestUserService {
         PageQuest pageQuest = new PageQuest();
         pageQuest.setPageNum(1);
         pageQuest.setPageSize(10);
+        pageQuest.setCondition(" user_name = '韩乐'");
         PageBean pageBean = userService.getUsers(pageQuest);
         System.out.println("pageBean ==> " + pageBean);
-        Assert.assertTrue(pageBean.getList().size() == 4);
+        Assert.assertTrue(pageBean.getList().size() == 1);
     }
 
 
     @Test
     public void testAddUser () {
         User user = new User();
-        user.setUserNumber(UserNumberUtil.getNumber());
+        user.setUserNumber(UserNumberUtil.getNumber() + "");
         user.setUserName("韩小乐");
         user.setUserMobile("18149197030");
         user.setUserGender(0);
@@ -81,7 +82,7 @@ public class TestUserService {
 
     @Test
     public void testGetUser () {
-        User user = userService.getUser(Long.parseLong("20181009233548157"));
+        User user = userService.getUser("20181009233548157");
         System.out.println("user ======> " + user);
         Assert.assertTrue(user != null);
     }

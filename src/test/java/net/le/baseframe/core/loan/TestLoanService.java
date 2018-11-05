@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
@@ -49,15 +51,16 @@ public class TestLoanService {
 
     @Test
     public void testGetLoan () {
-        Loan loan = loanService.getLoan(Long.parseLong("4"));
-        Assert.assertTrue(loan != null);
+        List<Loan> list = loanService.getLoan(Long.parseLong("4"));
+        Assert.assertTrue(list != null);
     }
 
 
     @Test
     public void testRenovateLoan () {
-        Loan loan = loanService.getLoan(Long.parseLong("4"));
-        loan.setLoanInterest(8000);
+        List<Loan> list = loanService.getLoan(Long.parseLong("4"));
+        Loan loan = list.get(0);
+        loan.setLoanInterest(50000);
         int count = loanService.renovateLoan(loan);
         Assert.assertTrue(count == 1);
     }

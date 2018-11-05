@@ -4,10 +4,12 @@ import net.le.baseframe.core.entity.Repayment;
 import net.le.baseframe.web.PageBean;
 import net.le.baseframe.web.PageQuest;
 
+import java.util.List;
+
 public interface RepaymentService {
 
     PageBean getRepayments(PageQuest pageQuest);
-    Repayment getRepayment(Long userId);
+    List<Repayment> getRepayment(Long userId);
     int addRepayment(Repayment repayment);
     int renoavteRepayment(Repayment repayment);
     int removeRepayment(Long id);

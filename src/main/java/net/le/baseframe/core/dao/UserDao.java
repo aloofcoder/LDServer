@@ -10,7 +10,7 @@ public interface UserDao {
                           @Param("startIndex") int startIndex,
                           @Param("pageSize") int pageSize);
     int getRowCount(@Param("condition") String condition);
-    User searchUserByUserNum(Long userNumber);
+    User searchUserByUserNum(String userNumber);
     User searchUserById(Long id);
     int insertUser (User user);
     int updateUser (User user);

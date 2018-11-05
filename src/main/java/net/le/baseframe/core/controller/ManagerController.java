@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import net.le.baseframe.core.entity.Manager;
 import net.le.baseframe.core.service.ManagerService;
 import net.le.baseframe.exception.AppControllerException;
+import net.le.baseframe.exception.AppServiceException;
 import net.le.baseframe.util.CheckParamUtils;
 import net.le.baseframe.util.DateUtils;
 import net.le.baseframe.util.SecurityUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -80,21 +82,57 @@ public class ManagerController {
     @PostMapping("/login")
     public ResultBean managerLogin (@RequestBody Manager manager, HttpServletRequest request, HttpServletResponse response) {
         // 通过管理员编号获取管理员信息
-        Long managerNumber = manager.getManagerNumber();
+        String managerNumber = manager.getManagerNumber();
         String managerPwd = manager.getManagerPwd();
         // 验证参数
         CheckParamUtils.isNull(managerNumber, "登录账号不能为空！");
         CheckParamUtils.isNull(managerPwd, "登录密码不能为空！");
         long nowMillis = DateUtils.getNowTimeMillis();
         Manager managerInfo = managerService.managerLogin(managerNumber, managerPwd, nowMillis);
-        // 将管理员账号密码和登陆时间MD5加密生成token令牌
-//        String str = managerNumber + "" + managerPwd + DateUtils.getNowTimeMillis();
-//        String token = SecurityUtils.getMd5(str);
-//        // jiangtoken保存
-//        System.out.println(token);
-//        HttpSession session = request.getSession();
-//        session.setAttribute(managerNumber.toString(), token);
-//        response.setHeader("set-token", token);
+        // 登录成功，将用户保存到session中
+        HttpSession session = request.getSession();
+        session.setAttribute(managerInfo.getManagerNumber().toString(), managerInfo);
+        Cookie cookie = new Cookie("loginUser", managerInfo.getManagerNumber().toString());
+        // cookie 有效期为2小时
+        cookie.setMaxAge(60 * 60 * 2);
+        response.addCookie(cookie);
+        managerInfo.setManagerPwd("");
         return new ResultBean(managerInfo);
+    }
+
+    @ApiOperation("验证管理员是否已登录")
+    @GetMapping("/checkLogin")
+    public ResultBean managerIsLogin (HttpServletRequest request) {
+        String loginUser = "";
+        Cookie[] cookies = request.getCookies();
+        for (Cookie c: cookies) {
+            System.out.println("判断用户是否登录cookie" + c.getName());
+            if ("loginUser".equals(c.getName())) {
+                loginUser = c.getValue();
+            }
+        }
+        System.out.println("loginUser: " + loginUser);
+        if ("".equals(loginUser)) {
+            throw new AppServiceException("当前未登录过系统！");
+        }
+        HttpSession session = request.getSession();
+        Manager manager = (Manager) session.getAttribute(loginUser);
+        if (manager == null) {
+            throw new AppServiceException("当前登录已过期！");
+        }
+        manager.setManagerPwd("");
+        return new ResultBean(manager);
+    }
+
+    @ApiOperation("管理员退出")
+    @GetMapping("loginOut/{managerNumber}")
+    public ResultBean managerLoginOut (@PathVariable("managerNumber") String managerNumber, HttpServletRequest request) {
+        System.out.println(managerNumber);
+        HttpSession session = request.getSession();
+        Manager manager = (Manager) session.getAttribute(managerNumber);
+        if (manager != null) {
+            session.removeAttribute(managerNumber);
+        }
+        return new ResultBean();
     }
 }

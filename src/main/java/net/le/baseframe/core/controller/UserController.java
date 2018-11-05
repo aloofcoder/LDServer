@@ -47,7 +47,7 @@ public class UserController {
     @ApiOperation(value = "通过用户编号获取用户信息")
     @ApiImplicitParam(name="userNumber", value = "用户编号",paramType = "path", dataType = "String", required = true)
     @GetMapping("/{userNumber}")
-    public ResultBean getUser(@PathVariable("userNumber") Long userNumber) {
+    public ResultBean getUser(@PathVariable("userNumber") String userNumber) {
         CheckParamUtils.isNull(userNumber, "用户编号不能为空！");
         User user = userService.getUser(userNumber);
         return new ResultBean(user);

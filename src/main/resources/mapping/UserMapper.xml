@@ -21,7 +21,7 @@
 
     <sql id="isCondition">
         <if test="condition != null and condition != ''">
-            AND #{condition}
+            AND ${condition}
         </if>
     </sql>
 
@@ -29,7 +29,7 @@
       SELECT * FROM user_info WHERE id = #{userId}
     </select>
 
-    <select id="searchUserByUserNum" resultMap="userResultMap" parameterType="long">
+    <select id="searchUserByUserNum" resultMap="userResultMap" parameterType="string">
         SELECT * FROM user_info WHERE user_num = #{userNumber}
         AND user_status = 0
     </select>
@@ -37,13 +37,17 @@
     <insert id="insertUser" parameterType="user">
         INSERT INTO user_info
         (id, user_num, user_name, user_gender, user_mobile, user_address,
-        user_idcard, user_idcardurl, user_imgurl, linkman_name1, linkman_mobile1,
-        linkman_name2, linkman_mobile2, linkman_name3, linkman_mobile3, user_status,
-        user_remark, create_time, edit_time, create_user, edit_user)
+        user_idcard, user_idcardurl, user_imgurl, user_profession,
+        user_company, user_companyadr, user_car, user_house, linkman_name1,
+        linkman_mobile1, linkman_name2, linkman_mobile2, linkman_name3,
+        linkman_mobile3, user_status, user_remark, create_time,
+        edit_time, create_user, edit_user)
         VALUES (NULL, #{userNumber}, #{userName}, #{userGender},
         #{userMobile}, #{userAddress}, #{userIdCard}, #{userIdCardUrl},
-        #{userImgUrl}, #{linkmanName1},#{linkmanMobile1}, #{linkmanName2},
-        #{linkmanMobile2}, #{linkmanName3}, #{linkmanMobile3}, #{userStatus},
+        #{userImgUrl}, #{userProfession}, #{userCompany},
+        #{userCompanyAdr}, #{userCar}, #{userHouse},
+        #{linkmanName1},#{linkmanMobile1}, #{linkmanName2},
+        #{linkmanMobile2}, #{linkmanName3}, #{linkmanMobile3}, 0,
         #{userRemark}, unix_timestamp(now()), UNIX_TIMESTAMP(NOW()),
         #{createUser}, #{editUser});
     </insert>
@@ -54,6 +58,9 @@
       user_gender = #{userGender}, user_mobile=#{userMobile},
       user_address = #{userAddress}, user_idcard = #{userIdCard},
       user_idcardurl = #{userIdCardUrl}, user_imgurl = #{userImgUrl},
+      user_profession = #{userProfession},
+      user_company = #{userCompany}, user_companyadr = #{userCompanyAdr},
+      user_car = #{userCar}, user_house = #{userHouse},
       linkman_name1 = #{linkmanName1}, linkman_mobile1 = #{linkmanMobile1},
       linkman_name2 = #{linkmanName2}, linkman_mobile2 = #{linkmanMobile2},
       linkman_name3 = #{linkmanName3}, linkman_mobile3 = #{linkmanMobile3},
@@ -79,6 +86,11 @@
         <result property="userIdCard" column="user_idcard"></result>
         <result property="userIdCardUrl" column="user_idcardurl"></result>
         <result property="userImgUrl" column="user_imgurl"></result>
+        <result property="userProfession" column="user_profession"></result>
+        <result property="userCompany" column="user_company"></result>
+        <result property="userCompanyAdr" column="user_companyadr"></result>
+        <result property="userCar" column="user_car"></result>
+        <result property="userHouse" column="user_house"></result>
         <result property="linkmanName1" column="linkman_name1"></result>
         <result property="linkmanMobile1" column="linkman_mobile1"></result>
         <result property="linkmanName2" column="linkman_name2"></result>

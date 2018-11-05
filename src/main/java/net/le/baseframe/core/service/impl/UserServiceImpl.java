@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long userNumber) {
+    public User getUser(String userNumber) {
         CheckParamUtils.isNull(userNumber, "用户编号不能为空！");
         User user = userDao.searchUserByUserNum(userNumber);
         return user;
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public int addUser(User user) {
         CheckParamUtils.isNull(user, "用户不能为空！");
-        user.setUserNumber(UserNumberUtil.getNumber());
+        user.setUserNumber(UserNumberUtil.getNumber() + "");
         int count = userDao.insertUser(user);
         return count;
     }

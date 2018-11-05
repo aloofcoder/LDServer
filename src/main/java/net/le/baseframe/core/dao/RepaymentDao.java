@@ -4,17 +4,18 @@ import net.le.baseframe.core.entity.Repayment;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface RepaymentDao {
 
     // 分页获取用户贷款信息
-    List<Repayment> searchRepayments(@Param("startIndex") int startIndex,
-                                     @Param("pageSize") int pageSize,
-                                     @Param("condition") String condition);
+    List<Map<String, Object>> searchRepayments(@Param("startIndex") int startIndex,
+                                               @Param("pageSize") int pageSize,
+                                               @Param("condition") String condition);
     // 获取用户贷款信息总条数
     int getRowCount(@Param("condition") String condition);
     // 通过用户id获取用户还款单
-    Repayment searchRepayment(Long userId);
+    List<Repayment> searchRepayment(Long userId);
     // 通过下发时间获取用户还款单
     List<Repayment> searchRepaymentByLowerTime(@Param("lowerTime") Long lowerTime,
                                                @Param("loanId") Long loanId,

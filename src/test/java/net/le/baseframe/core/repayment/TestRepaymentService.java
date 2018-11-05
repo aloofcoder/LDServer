@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class TestRepaymentService {
@@ -25,9 +27,7 @@ public class TestRepaymentService {
         repayment.setUserId(Long.parseLong("4"));
         repayment.setLoanId(Long.parseLong("1"));
         repayment.setRepaymentMoney(100);
-        repayment.setRepaymentSource("微信");
-        repayment.setRepaymentTime(System.currentTimeMillis());
-        repayment.setLowerTime(DateUtils.getNowMonthPre().getTime());
+        repayment.setLowerTime(DateUtils.getNowMonthPre().getTime()/1000);
         repayment.setRepaymentStatus(0);
         repayment.setCreateUser("韩乐");
         repayment.setEditUser("韩乐");
@@ -44,7 +44,9 @@ public class TestRepaymentService {
 
     @Test
     public void testRenovateRepayment () {
-        Repayment repayment = repaymentService.getRepayment(Long.parseLong("4"));
+        List<Repayment> list = repaymentService.getRepayment(Long.parseLong("4"));
+        Assert.assertTrue(list.size() > 0);
+        Repayment repayment = list.get(0);
         repayment.setRepaymentMoney(100000);
         repayment.setEditUser("韩乐");
         int count = repaymentService.renoavteRepayment(repayment);

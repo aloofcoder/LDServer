@@ -11,7 +11,7 @@ public interface ManagerDao {
                                  @Param("pageSize") int pageSize,
                                  @Param("condition") String condition);
     int getRowCount(@Param("condition") String condition);
-    Manager searchManagerByManagerNumber(Long managerNumber);
+    Manager searchManagerByManagerNumber(String managerNumber);
     int insertManager(Manager manager);
     int updateManager(Manager manager);
     int deleteManager(Long id);

@@ -16,10 +16,10 @@ public interface UserService {
 
     /**
      * 通过用户编号获取用户信息
-     * @param id
+     * @param userNumber
      * @return
      */
-    User getUser(Long userNumber);
+    User getUser(String userNumber);
 
     /**
      * 添加用户

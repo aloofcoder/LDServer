@@ -22,7 +22,7 @@ public class TestManagerService {
     @Test
     public void testAddManager() {
         Manager manager = new Manager();
-        manager.setManagerNumber(Long.parseLong("18149197030"));
+        manager.setManagerNumber("18149197030");
         manager.setManagerPwd("123456");
         manager.setManagerName("韩乐");
         manager.setManagerStatus(0);

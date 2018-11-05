@@ -44,7 +44,7 @@ public class ManagerServiceImpl implements ManagerService {
     }
 
     @Override
-    public Manager managerLogin(Long managerNumber, String managerPwd,long nowMillis) {
+    public Manager managerLogin(String managerNumber, String managerPwd,long nowMillis) {
         CheckParamUtils.isNull(managerNumber, "登陆账号不能为空！");
         CheckParamUtils.isNull(managerNumber, "登陆密码不能为空！");
         Manager manager = managerDao.searchManagerByManagerNumber(managerNumber);

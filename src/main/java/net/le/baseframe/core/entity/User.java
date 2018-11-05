@@ -16,7 +16,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = -3059456620602082015L;
 
     private Long id;
-    private Long userNumber;
+    private String userNumber;
     private String userName;
     private Integer userGender;
     private String userMobile;
@@ -24,6 +24,11 @@ public class User implements Serializable {
     private String userIdCard;
     private String userIdCardUrl;
     private String userImgUrl;
+    private String userProfession;
+    private String userCompany;
+    private String userCompanyAdr;
+    private String userCar;
+    private String userHouse;
     private String linkmanName1;
     private String linkmanMobile1;
     private String linkmanName2;

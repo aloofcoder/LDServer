@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class LoanServiceImpl implements LoanService {
@@ -32,7 +33,8 @@ public class LoanServiceImpl implements LoanService {
         String condition = pageQuest.getCondition();
         // 获取分页开始索引
         int startIndex = pageQuest.getStartIndex(pageNum, pageSize);
-        List<Loan> list = loanDao.searchLoans(startIndex, pageSize, condition);
+        List<Map<String, Object>> list = loanDao.searchLoans(startIndex, pageSize, condition);
+        System.out.println("loanlist ======> " + list);
         int count = loanDao.getRowCount(condition);
         int totalPage = PageBean.getTotalPage(pageSize, count);
         PageBean pageBean = new PageBean(pageNum, pageSize, totalPage, count, list);
@@ -40,10 +42,10 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public Loan getLoan(Long userId) {
+    public List<Loan> getLoan(Long userId) {
         CheckParamUtils.isNull(userId, "用户信息Id不能为空！");
-        Loan loan = loanDao.searchLoan(userId);
-        return loan;
+        List<Loan> list = loanDao.searchLoan(userId);
+        return list;
     }
 
     @Override

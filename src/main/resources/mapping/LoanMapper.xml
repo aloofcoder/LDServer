@@ -4,11 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.le.baseframe.core.dao.LoanDao">
     <!-- 分页查询贷款信息 -->
-    <select id="searchLoans" resultMap="loanResultMap">
-        SELECT * FROM loan_info
-        WHERE loan_status = 0
+    <select id="searchLoans" resultType="map">
+        SELECT l.id id,l.loan_money loanMoney,l.loan_interest loanInterest,
+        l.loan_periods loanPeriods,l.loan_interest_period loanInterestPeriod,
+        l.loan_type loanType,l.loan_pledge loanPledge,l.loan_status loanStatus, l.loan_remarks loanRemarks,
+        l.create_time createTime,u.id userId,u.user_num userNumber,u.user_name userName,u.user_gender userGender,u.user_mobile userMobile,
+        u.user_address userAddress,u.user_idcard userIdCard,u.user_idcardurl userIdCardUrl,u.user_imgurl userImgUrl,
+        u.linkman_name1 linkmanName1,u.linkman_mobile1 linkmanMobile1,
+        u.linkman_name2 linkmanName2,u.linkman_mobile2 linkmanMobile2,
+        u.linkman_name3 linkmanName3,u.linkman_mobile3 linkmanMobile3
+        FROM loan_info l
+        LEFT JOIN user_info u ON l.user_id = u.id
+        WHERE l.loan_status = 0
         <include refid="isCondition"/>
-        ORDER BY create_time DESC
+        ORDER BY l.create_time DESC
         limit #{startIndex}, #{pageSize};
     </select>
 
@@ -21,15 +30,17 @@
 
     <!-- 获取所有贷款信息总条数 -->
     <select id="getRowCount" resultType="int">
-        SELECT count(*) FROM loan_info
-        WHERE loan_status = 0
+        SELECT count(*)
+        FROM loan_info l
+        LEFT JOIN user_info u ON l.user_id = u.id
+        WHERE l.loan_status = 0
         <include refid="isCondition"/>
     </select>
 
     <!-- 查询条件 -->
     <sql id="isCondition">
         <if test="condition != null and condition != ''">
-            AND #{condition}
+            AND ${condition}
         </if>
     </sql>
 

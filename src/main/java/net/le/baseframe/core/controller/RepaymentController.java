@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/repayments")
 @Api("用户还款操作接口类")
@@ -46,8 +48,8 @@ public class RepaymentController {
     @GetMapping("/{userId}")
     public ResultBean getRepayment (@PathVariable("userId") Long userId) {
         CheckParamUtils.isNull(userId, "用户Id不能为空");
-        Repayment repayment = repaymentService.getRepayment(userId);
-        return new ResultBean(repayment);
+        List<Repayment> list = repaymentService.getRepayment(userId);
+        return new ResultBean(list);
     }
 
     @PostMapping

@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/loans")
 @Api("客户贷款信息接口类")
@@ -46,8 +48,8 @@ public class LoanController {
     @GetMapping("/{userId}")
     public ResultBean getLoan(@PathVariable("userId") Long userId) {
         CheckParamUtils.isNull(userId, "用户Id不能为空!");
-        Loan loan = loanService.getLoan(userId);
-        return new ResultBean(loan);
+        List<Loan> list = loanService.getLoan(userId);
+        return new ResultBean(list);
     }
 
 

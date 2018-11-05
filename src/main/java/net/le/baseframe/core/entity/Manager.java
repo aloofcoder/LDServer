@@ -14,7 +14,7 @@ public class Manager implements Serializable {
     private static final long serialVersionUID = 588326771651283345L;
 
     private Long id;
-    private Long managerNumber;
+    private String managerNumber;
     private String managerPwd;
     private String managerName;
     private Long loginTime;

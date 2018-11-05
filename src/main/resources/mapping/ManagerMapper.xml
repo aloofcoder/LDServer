@@ -21,11 +21,11 @@
     <!-- 查询条件 -->
     <sql id="isCondition">
         <if test="condition != null and condition != ''">
-            AND #{condition}
+            AND ${condition}
         </if>
     </sql>
 
-    <select id="searchManagerByManagerNumber" parameterType="long" resultMap="managerResultMap">
+    <select id="searchManagerByManagerNumber" parameterType="string" resultMap="managerResultMap">
         SELECT * FROM manager_info
         WHERE manager_num = #{managerNumber}
         AND manager_status = 0;
